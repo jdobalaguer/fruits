@@ -13,6 +13,7 @@
 **VI** : See three images, say if they are part of the training set (target, valid) or not.  
 
 ### License
-Some files here are not of my own.
-  - IO64 library [[http://apps.usd.edu/coglab/psyc770/IO64.html]]
+I do not have propierty over some of these files.
+  - [IO64 library](http://apps.usd.edu/coglab/psyc770/IO64.html)
   - Some IO64 wrappers by Miriam Klein-Flugge (FMRIB Oxford)
+  - Stimuli from Food Court Solution](http://www.conceptdraw.com/solution-park/food-beverage-food-court)
