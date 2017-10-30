@@ -1,7 +1,7 @@
 
 ### Keyboard
 
-**[`ยง`]** : Escape   
+**[`ง`]** : Escape   
 **[`?`]** : Return, move forward during breaks  
 **[`T`]** : Trigger  
 **[`H`]** : Target response  
@@ -11,6 +11,11 @@
 
 **RS** : See two images, say if they are tilted in the same direction (target, match) or not.  
 **VI** : See three images, say if they are part of the training set (target, valid) or not.  
+
+### Timings
+
+**RS** : 3 scanner runs of 817 seconds  
+**VI** : 3 scanner runs of 385 seconds  
 
 ### License
 I do not have propierty over some of these files.

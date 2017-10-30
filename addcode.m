@@ -4,7 +4,7 @@ function addcode()
     path = fullfile(pwd,'task');
     path = genpath(path);
     
-    switch computer
+    switch computer()
         case {'PCWIN','PCWIN64'}, delimiter = ';C:'; % windows
         case {'MACI64'},          delimiter = ':';   % mac
         case {'GLNXA64'},         delimiter = ':';   % linux

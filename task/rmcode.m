@@ -3,8 +3,15 @@ function rmcode()
     %% function
     path = fullfile(pwd,'task');
     path = genpath(path);
-    path = strsplit(path,':')';
-    path(contains(path,'assets')) = [];
-    path = strjoin(path,':');
+    
+    switch computer
+        case {'PCWIN','PCWIN64'}, delimiter = ';C:'; % windows
+        case {'MACI64'},          delimiter = ':';   % mac
+        case {'GLNXA64'},         delimiter = ':';   % linux
+    end
+    path = strsplit(path,delimiter)';
+    path(~cellfun(@isempty,strfind(path,'assets'))) = []; %#ok<STRCLFH>
+    path = reshape(path,[1,numel(path)]);
+    path = strjoin(path,delimiter);
     rmpath(path);
 end

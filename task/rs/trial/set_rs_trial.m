@@ -20,11 +20,12 @@ trialstruct = struct();
 trialstruct.expt_task       = 'rs';
 
 % time
-trialstruct.time_isi        = rs.isi;
 trialstruct.time_sample     = nan;
+trialstruct.time_delay      = nan;
 trialstruct.time_probe      = nan;
 trialstruct.time_response   = nan;
 trialstruct.time_feedback   = nan;
+trialstruct.time_isi        = rs.isi;
 
 % vbxi
 trialstruct.vbxi_day        = rs.day;
@@ -36,6 +37,7 @@ trialstruct.vbxi_response   = rs.match;
 % pad out
 trialstruct.vbxi_day(end+1)    = nan;
 trialstruct.vbxi_image(end+1)  = nan;
+trialstruct.vbxi_level(end+1)  = nan;
 trialstruct.vbxi_file{end+1}   = '';
 
 % response

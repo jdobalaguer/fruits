@@ -23,10 +23,11 @@ questions.vi.day   = repmat(questions.vi.day,  [1,3]);
 questions.vi = struct_filter(questions.vi, randperm(144));
 
 % isi
-questions.vi.isi = unifrnd(parameters.time_vi_isimin,parameters.time_vi_isimax,[parameters.task_nbtrials_vi,sum(strcmp(parameters.task_sessions,'vi'))]);
-questions.vi.isi = questions.vi.isi ./ repmat(sum(questions.vi.isi,1), [size(questions.vi.isi,1),1]);
-questions.vi.isi = questions.vi.isi .* mean([parameters.time_vi_isimin,parameters.time_vi_isimax]) .* parameters.task_nbtrials_vi;
-questions.vi.isi = nan2zero(mat2vec(questions.vi.isi));
+questions.vi.isi = linspace(parameters.time_vi_isimin,parameters.time_vi_isimax,parameters.task_nbtrials_vi)';
+questions.vi.isi = {questions.vi.isi};
+questions.vi.isi = repmat(questions.vi.isi,[1,sum(strcmp(parameters.task_sessions,'vi'))]);
+questions.vi.isi = cellfun(@shuffle,questions.vi.isi,'UniformOutput',false);
+questions.vi.isi = cat(1,questions.vi.isi{:});
 
 % sort
 questions.vi = struct_sort(questions.vi);
@@ -67,10 +68,11 @@ questions.rs.match = (questions.rs.day(:,1) == questions.rs.day(:,2));
 questions.rs = struct_filter(questions.rs, randperm(432));
 
 % isi
-questions.rs.isi = unifrnd(parameters.time_rs_isimin,parameters.time_rs_isimax,[parameters.task_nbtrials_rs,sum(strcmp(parameters.task_sessions,'rs'))]);
-questions.rs.isi = questions.rs.isi ./ repmat(sum(questions.rs.isi,1), [size(questions.rs.isi,1),1]);
-questions.rs.isi = questions.rs.isi .* mean([parameters.time_rs_isimin,parameters.time_rs_isimax]) .* parameters.task_nbtrials_rs;
-questions.rs.isi = nan2zero(mat2vec(questions.rs.isi));
+questions.rs.isi = linspace(parameters.time_rs_isimin,parameters.time_rs_isimax,parameters.task_nbtrials_rs)';
+questions.rs.isi = {questions.rs.isi};
+questions.rs.isi = repmat(questions.rs.isi,[1,sum(strcmp(parameters.task_sessions,'rs'))]);
+questions.rs.isi = cellfun(@shuffle,questions.rs.isi,'UniformOutput',false);
+questions.rs.isi = cat(1,questions.rs.isi{:});
 
 % shuffle
 questions.rs = struct_sort(questions.rs);

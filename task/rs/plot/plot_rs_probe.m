@@ -13,5 +13,3 @@ Screen( ptb.screen_w,                                           ... window
 
 %% Clean
 clear image_size;
-clear nx ny textbounds width_text;
-clear n_frame i_frame position;

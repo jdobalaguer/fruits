@@ -30,7 +30,7 @@ plot_fixation;
 % Time
 ptb.screen_time_this = GetSecs;
 ptb.screen_time_next = ptb.screen_time_this + parameters.time_rs_delay;
-trialstruct.time_sample = ptb.screen_time_this - index.gs_trigger;
+trialstruct.time_delay = ptb.screen_time_this - index.gs_trigger;
 
 % Flip
 Screen(ptb.screen_w,'Flip');
@@ -58,7 +58,7 @@ while   gs < ptb.screen_time_next        && ... time
         isnan(trialstruct.resp_response) && ... response
         ~index.escape                       ... exit
         
-    resp_rs_trial;
+    resp_rs_probe;
 end
 
 % Wait after response
@@ -73,7 +73,7 @@ plot_fixation;
 % Time
 ptb.screen_time_this = GetSecs;
 ptb.screen_time_next = ptb.screen_time_this + parameters.time_rs_response;
-trialstruct.time_sample = ptb.screen_time_this - index.gs_trigger;
+trialstruct.time_response = ptb.screen_time_this - index.gs_trigger;
 
 % Flip
 Screen(ptb.screen_w,'Flip');
@@ -84,7 +84,7 @@ while   gs < ptb.screen_time_next        && ... time
         isnan(trialstruct.resp_response) && ... response
         ~index.escape                       ... exit
         
-    resp_rs_trial;
+    resp_rs_response;
 end
 
 % No response

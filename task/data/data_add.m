@@ -13,11 +13,12 @@ data.expt_trial(end+1,:)        = index.trial;
 
 % time
 data.time_trigger(end+1,:)      = index.gs_trigger;        % this one is a timestamp
-data.time_isi(end+1,:)          = trialstruct.time_isi;    % this one is a duration of ISI
 data.time_sample(end+1,:)       = trialstruct.time_sample; % everything else is time since trigger
+data.time_delay(end+1,:)        = trialstruct.time_delay;
 data.time_probe(end+1,:)        = trialstruct.time_probe;
 data.time_response(end+1,:)     = trialstruct.time_response;
 data.time_feedback(end+1,:)     = trialstruct.time_feedback;
+data.time_isi(end+1,:)          = trialstruct.time_isi;    % this one is a duration of ISI
 
 % variables
 data.vbxi_day(end+1,:)          = trialstruct.vbxi_day;

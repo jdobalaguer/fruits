@@ -6,15 +6,15 @@ gs = GetSecs();
 if isnan(trialstruct.resp_response) && parameters.flag_ioport
     byte_in = io64(ptb.io.ioObj,ptb.io.address);
     if     ~bitget(byte_in,ptb.io.IO.buttonBit(1))
-        trialstruct.resp_rt         = gs - ptb.screen_time_this;
-        trialstruct.time_response   = gs - index.gs_trigger;
+        trialstruct.resp_rt         = (gs - index.gs_trigger) - trialstruct.time_probe;
         trialstruct.resp_response   = 1;
         trialstruct.resp_correct    = (trialstruct.resp_response == trialstruct.vbxi_response);
+        plot_vi_resp_response;
     elseif  bitget(byte_in,ptb.io.IO.buttonBit(2))
-        trialstruct.resp_rt         = gs - ptb.screen_time_this;
-        trialstruct.time_response   = gs - index.gs_trigger;
+        trialstruct.resp_rt         = (gs - index.gs_trigger) - trialstruct.time_probe;
         trialstruct.resp_response   = 0;
         trialstruct.resp_correct    = (trialstruct.resp_response == trialstruct.vbxi_response);
+        plot_vi_resp_response;
     end
     % clean
     clear byte_in;
@@ -29,15 +29,15 @@ if down && sum(code)==1 && find(code)
             index.escape     = 1;
             fprintf('Exit forced by user.\n');
         case num2cell(KbName(parameters.key_target))
-            trialstruct.resp_rt         = gs - ptb.screen_time_this;
-            trialstruct.time_response   = gs - index.gs_trigger;
+            trialstruct.resp_rt         = (gs - index.gs_trigger) - trialstruct.time_probe;
             trialstruct.resp_response   = 1;
             trialstruct.resp_correct    = (trialstruct.resp_response == trialstruct.vbxi_response);
+            plot_vi_resp_response;
         case num2cell(KbName(parameters.key_nontarget))
-            trialstruct.resp_rt         = gs - ptb.screen_time_this;
-            trialstruct.time_response   = gs - index.gs_trigger;
+            trialstruct.resp_rt         = (gs - index.gs_trigger) - trialstruct.time_probe;
             trialstruct.resp_response   = 0;
             trialstruct.resp_correct    = (trialstruct.resp_response == trialstruct.vbxi_response);
+            plot_vi_resp_response;
     end
     % clean
     clear down code;

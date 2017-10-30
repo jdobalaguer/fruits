@@ -14,11 +14,12 @@ data.expt_trial      = zeros(0,1);
 
 % time
 data.time_trigger    = zeros(0,1);
-data.time_isi        = zeros(0,1);
 data.time_sample     = zeros(0,1);
+data.time_delay      = zeros(0,1);
 data.time_probe      = zeros(0,1);
 data.time_response   = zeros(0,1);
 data.time_feedback   = zeros(0,1);
+data.time_isi        = zeros(0,1);
 
 % variables
 data.vbxi_day        = zeros(0,3);
