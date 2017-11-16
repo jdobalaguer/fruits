@@ -2,25 +2,81 @@
 questions = struct();
 
 %% valid-invalid
-vi = [ 1, 5,10; 1, 6,11; 1, 6,12; 4, 6, 9; 4, 6,10; 4, 7,11; 2, 7, 9; 2, 8,11; 2, 8,12; 3, 8, 9; 3, 8,10; 3, 5,12;11, 5,10; 1, 6, 8; 1, 4,12; 4,10, 9; 4, 6, 2; 8, 7,11;11, 7, 9; 2, 8, 6; 2, 3,12; 3,10, 9; 3, 8, 1; 6, 5,12];
+vi = struct();
 
-questions.vi.image = repmat(vi,[2,1]);
-questions.vi.valid = repmat([ones(12,1);zeros(12,1)],[2,1]);
-questions.vi.day   = repmat([1,2],[24,1]);
-questions.vi.day   = questions.vi.day(:);
+% structure
+vi.structure      = [ 1, 5, 9; 1, 5,10; 1, 6,11; 1, 6,12; 2, 7, 9; 2, 7,10; 2, 8,11; 2, 8,12; 3, 8, 9; 3, 8,10; 3, 5,11; 3, 5,12; 4, 6, 9; 4, 6,10; 4, 7,11; 4, 7,12];
 
-% permute across samples/probe
-vi = cellfun(@(i) questions.vi.image(:,i),{[1,2,3],[2,3,1],[3,1,2]},'UniformOutput',false);
-questions.vi.image = cat(1,vi{:});
-questions.vi.level = ceil(questions.vi.image/4);
-questions.vi.valid = repmat(questions.vi.valid,[3,1]);
-questions.vi.day   = repmat(questions.vi.day,  [3,1]);
+% build  valid trials
+vi.valid.image    = cat(1,vi.structure(:,[1,2,3]),...
+                          vi.structure(:,[3,1,2]),...
+                          vi.structure(:,[2,3,1]),...
+                          vi.structure(:,[2,1,3]),...
+                          vi.structure(:,[1,3,2]),...
+                          vi.structure(:,[3,2,1]));
+vi.valid.level     = ceil(vi.valid.image / 4);
+vi.valid.salad     = repmat(mat2vec(1:16),[6,1]);
+vi.valid.permute   = mat2vec(repmat(1:6,[16,1]));
+vi.valid.valid     = ones(size(vi.valid.level,1),1);
+vi.valid.day       = mat2vec(repmat([1,2],[48,1]));
 
-% day per dimeninsion
-questions.vi.day   = repmat(questions.vi.day,  [1,3]);
+% build invalid trials
+vi.invalid = vi.valid;
+s = nan;
+while any(vi.invalid.valid)
+    % suggest a permutation for the probes (only valid salads)
+    ii_permutation = randperm(sum(vi.invalid.valid));
+    ii_valid     = find(vi.invalid.valid == 1);
+    vi.invalid.image(ii_valid,3) = vi.invalid.image(ii_valid(ii_permutation),3);
+    vi.invalid.level             = ceil(vi.invalid.image / 4);
+    % salad counts as valid if it has all 3 levels
+    vi.invalid.valid             = all(cell2mat(cellfun(@sort,mat2cell(vi.invalid.level,ones(size(vi.invalid.level,1),1),3),'unif',0)) == [1,2,3],2);
+    % if the cardinal of valid salads didn't go down, chances are we're stuck. restart.
+    if sum(vi.invalid.valid) == s, vi.invalid = vi.valid; end
+    s = sum(vi.invalid.valid);
+    % restart if the solution is too unbalanced across levels/days
+    if ~any(vi.invalid.valid)
+        [~,~,h] = unique(vi.invalid.level + 3*(vi.invalid.day-1),'rows');
+        h = hist(h,1:12);
+        if ~all(ismember(h,8)), vi.invalid = vi.valid; end
+    end
+end
+clear s h ii_permutation ii_valid
 
-% shuffle
-questions.vi = struct_filter(questions.vi, randperm(144));
+% concatenate and shuffle
+vi.trial = struct_concat(1,vi.valid,vi.invalid);
+vi.trial = struct_filter(vi.trial, randperm(size(vi.trial.image,1)));
+
+% save
+questions.vi.image = vi.trial.image;
+questions.vi.valid = vi.trial.valid;
+questions.vi.day   = repmat(vi.trial.day,[1,3]);
+questions.vi.level = vi.trial.level;
+
+% filter out 75% of trials
+for i_day = 1:2
+for i_valid = 0:1
+for i_level = 1:3
+    
+    % index
+    ii_day   = all(questions.vi.day == i_day,2);
+    ii_valid = (questions.vi.valid  == i_valid);
+    ii_level = all(~ismember(questions.vi.level(:,1:2),i_level),2);
+    
+    % select 25% at random
+    ii_discard = (ii_day & ii_valid & ii_level);
+    ii_discard = shuffle(find(ii_discard));
+    ii_discard = ii_discard(1:(length(ii_discard)/4));
+    
+    % filter those out
+    ii_keep = true(size(ii_day));
+    ii_keep(ii_discard) = false;
+    questions.vi = struct_filter(questions.vi,ii_keep);
+end
+end
+end
+clear i_day i_level i_valid
+clear ii_day ii_level ii_valid ii_discard ii_keep
 
 % isi
 questions.vi.isi = linspace(parameters.time_vi_isimin,parameters.time_vi_isimax,parameters.task_nbtrials_vi)';
@@ -31,9 +87,6 @@ questions.vi.isi = cat(1,questions.vi.isi{:});
 
 % sort
 questions.vi = struct_sort(questions.vi);
-
-% how to re-compute [valid]
-% % questions.vi.valid = all(cell2mat(cellfun(@sort,mat2cell(ceil(questions.vi.image / 4),ones(144,1),3),'unif',0)) == [1,2,3],2);
 
 % clean
 clear vi;
@@ -61,8 +114,66 @@ questions.rs.image = [rs.sample.image,rs.probe.image];
 questions.rs.day   = [rs.sample.day,  rs.probe.day];
 questions.rs.level = [rs.sample.level,rs.probe.level];
 
+% filter out half the invalid trials
+for i_day1   = 1:2
+for i_day2   = 1:2
+for i_level1 = 1:3
+for i_level2 = 1:3
+    
+    % indices
+    if i_level1==i_level2, continue; end
+    ii_day1   = (questions.rs.day(:,1)   == i_day1);
+    ii_day2   = (questions.rs.day(:,2)   == i_day2);
+    ii_level1 = (questions.rs.level(:,1) == i_level1);
+    ii_level2 = (questions.rs.level(:,2) == i_level2);
+    
+    % select 50% at random
+    ii_discard = (ii_day1 & ii_day2 & ii_level1 & ii_level2);
+    ii_discard = shuffle(find(ii_discard));
+    ii_discard = ii_discard(1:(length(ii_discard)/2));
+    
+    % filter those out
+    ii_keep    = true(size(ii_day1));
+    ii_keep(ii_discard) = false;
+    questions.rs = struct_filter(questions.rs,ii_keep);
+end
+end
+end
+end
+clear i_day1 i_day2 i_level1 i_level2
+clear ii_day1 ii_day2 ii_level1 ii_level2 ii_discard ii_keep
+
+% add an extra half of trials again!
+for i_day1   = 1:2
+for i_day2   = 1:2
+for i_level1 = 1:3
+for i_level2 = 1:3
+for i_same   = 0:1
+    
+    % indices
+    ii_same   = ((questions.rs.level(:,1) == questions.rs.level(:,2)) == i_same);
+    ii_day1   = (questions.rs.day(:,1)   == i_day1);
+    ii_day2   = (questions.rs.day(:,2)   == i_day2);
+    ii_level1 = (questions.rs.level(:,1) == i_level1);
+    ii_level2 = (questions.rs.level(:,2) == i_level2);
+    
+    % select half at random
+    ii_concat = (ii_same & ii_day1 & ii_day2 & ii_level1 & ii_level2);
+    ii_concat = shuffle(find(ii_concat));
+    ii_concat = ii_concat(1:(length(ii_concat)/2));
+    
+    % concatenate
+    questions.rs = struct_concat(1,questions.rs,struct_filter(questions.rs,ii_concat));
+end
+end
+end
+end
+end
+clear i_same i_day1 i_day2 i_level1 i_level2
+clear ii_same ii_day1 ii_day2 ii_level1 ii_level2 ii_concat
+
 % match
-questions.rs.match = (questions.rs.day(:,1) == questions.rs.day(:,2));
+questions.rs.match = double((questions.rs.day(:,1) == questions.rs.day(:,2)));
 
 % shuffle
 questions.rs = struct_filter(questions.rs, randperm(432));

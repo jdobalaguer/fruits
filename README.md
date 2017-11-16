@@ -21,4 +21,4 @@
 I do not have propierty over some of these files.
   - [IO64 library](http://apps.usd.edu/coglab/psyc770/IO64.html)
   - Some IO64 wrappers by Miriam Klein-Flugge (FMRIB Oxford)
-  - Stimuli from [Food Court Solution](http://www.conceptdraw.com/solution-park/food-beverage-food-court)
+  - Stimuli from [Food Court Solution](http://www.conceptdraw.com/samples/food-beverage-food-court) with license [CC BY-NC-ND 3.0](https://creativecommons.org/licenses/by-nc-nd/3.0/)

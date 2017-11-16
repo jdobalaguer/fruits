@@ -6,7 +6,7 @@ function check_bonus(data)
     %% function
 
     % max bonus
-    max_bonus = 5.00;
+    max_bonus = 10.00;
 
     % means
     mean_vi = mean(data.resp_correct(strcmp(data.expt_task,'vi')));

@@ -3,10 +3,10 @@ parameters = struct();
 
 %% flag
 parameters.flag_verbose         = 0;
-parameters.flag_debug           = 1; %0;
-parameters.flag_practice        = 0;
+parameters.flag_debug           = 0;
+parameters.flag_practice        = 1; %0;
 parameters.flag_trigger         = 1;
-parameters.flag_jitter          = 0; %1;
+parameters.flag_jitter          = 1;
 parameters.flag_response        = 1;
 parameters.flag_ioport          = 0; %1;
 parameters.flag_audio           = 0;
@@ -45,9 +45,9 @@ parameters.time_vi_isimax       =  3.0;
 parameters.time_rs_sample       =  0.5;
 parameters.time_rs_delay        =  0.5;
 parameters.time_rs_probe        =  0.5;
-parameters.time_rs_response     =  1.0;
-parameters.time_rs_isimin       =  1.0;
-parameters.time_rs_isimax       =  5.0;
+parameters.time_rs_response     =  2.0;
+parameters.time_rs_isimin       =  0.0;
+parameters.time_rs_isimax       =  4.0;
 
 if ~parameters.flag_jitter
     parameters.time_presession      =  0;
@@ -57,14 +57,14 @@ if ~parameters.flag_jitter
     parameters.time_rs_isimin       =  0;
     parameters.time_rs_isimax       =  0;
     
-%     parameters.time_vi_sample       =  0;
-%     parameters.time_vi_delay        =  0;
-%     parameters.time_vi_probe        =  0;
-%     parameters.time_vi_response     =  0;
-%     parameters.time_rs_sample       =  0;
-%     parameters.time_rs_delay        =  0;
-%     parameters.time_rs_probe        =  0;
-%     parameters.time_rs_response     =  0;
+    parameters.time_vi_sample       =  0;
+    parameters.time_vi_delay        =  0;
+    parameters.time_vi_probe        =  0;
+    parameters.time_vi_response     =  0;
+    parameters.time_rs_sample       =  0;
+    parameters.time_rs_delay        =  0;
+    parameters.time_rs_probe        =  0;
+    parameters.time_rs_response     =  0;
 end
 
 %% screen
