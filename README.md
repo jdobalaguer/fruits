@@ -9,7 +9,7 @@
 
 ### Tasks
 
-**`RS`** : See two images, say if they are tilted in the same direction (target, match) or not.  
+**`RS`** : See two images, say if they correspond to the same day (target, match) or not.  
 **`VI`** : See three images, say if they are part of the training set (target, valid) or not.  
 
 ### Timings
