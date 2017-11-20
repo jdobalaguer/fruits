@@ -148,23 +148,20 @@ for i_day1   = 1:2
 for i_day2   = 1:2
 for i_level1 = 1:3
 for i_level2 = 1:3
-for i_same   = 0:1
     
     % indices
-    ii_same   = ((questions.rs.level(:,1) == questions.rs.level(:,2)) == i_same);
     ii_day1   = (questions.rs.day(:,1)   == i_day1);
     ii_day2   = (questions.rs.day(:,2)   == i_day2);
     ii_level1 = (questions.rs.level(:,1) == i_level1);
     ii_level2 = (questions.rs.level(:,2) == i_level2);
     
     % select half at random
-    ii_concat = (ii_same & ii_day1 & ii_day2 & ii_level1 & ii_level2);
+    ii_concat = (ii_day1 & ii_day2 & ii_level1 & ii_level2);
     ii_concat = shuffle(find(ii_concat));
     ii_concat = ii_concat(1:(length(ii_concat)/2));
     
     % concatenate
     questions.rs = struct_concat(1,questions.rs,struct_filter(questions.rs,ii_concat));
-end
 end
 end
 end

@@ -27,8 +27,8 @@ end
 parameters.key_escape           = {key};
 parameters.key_return           = 'Return';
 parameters.key_trigger          = 'T';
-parameters.key_target           = 'H';
-parameters.key_nontarget        = 'J';
+parameters.key_target           = {'H','A'};
+parameters.key_nontarget        = {'J','B'};
 clear key;
 
 %% time
