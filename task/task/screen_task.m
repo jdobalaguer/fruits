@@ -7,7 +7,7 @@ Screen(ptb.screen_w, 'TextColor', parameters.screen_fontcolor);
 Screen(ptb.screen_w, 'TextBackgroundColor', parameters.screen_fontbgcolor);
 
 %% Plot
-DrawFormattedText(ptb.screen_w,'Task','center','center');
+DrawFormattedText(ptb.screen_w,'Tarea','center','center');
 
 %% Time
 ptb.screen_time_this = GetSecs;

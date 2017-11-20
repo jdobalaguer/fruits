@@ -7,26 +7,50 @@ vi = struct();
 % structure
 vi.structure      = [ 1, 5, 9; 1, 5,10; 1, 6,11; 1, 6,12; 2, 7, 9; 2, 7,10; 2, 8,11; 2, 8,12; 3, 8, 9; 3, 8,10; 3, 5,11; 3, 5,12; 4, 6, 9; 4, 6,10; 4, 7,11; 4, 7,12];
 
-% build  valid trials
+% build  all valid trials
 vi.valid.image    = cat(1,vi.structure(:,[1,2,3]),...
                           vi.structure(:,[3,1,2]),...
                           vi.structure(:,[2,3,1]),...
-                          vi.structure(:,[2,1,3]),...
-                          vi.structure(:,[1,3,2]),...
-                          vi.structure(:,[3,2,1]));
-vi.valid.level     = ceil(vi.valid.image / 4);
+                          vi.structure(:,[1,2,3]),...
+                          vi.structure(:,[3,1,2]),...
+                          vi.structure(:,[2,3,1]));
+                      
+% shuffle left/right valid sample
+vi.valid.shuffle   = randi(2,size(vi.valid.image,1),1);
+vi.valid.image     = cat(2, vi.valid.image(sub2ind(size(vi.valid.image), mat2vec(1:size(vi.valid.image,1)), vi.valid.shuffle)), ...
+                            vi.valid.image(sub2ind(size(vi.valid.image), mat2vec(1:size(vi.valid.image,1)), 3-vi.valid.shuffle)), ...
+                            vi.valid.image(:,3));
+% define valid salads           
 vi.valid.salad     = repmat(mat2vec(1:16),[6,1]);
 vi.valid.permute   = mat2vec(repmat(1:6,[16,1]));
-vi.valid.valid     = ones(size(vi.valid.level,1),1);
+vi.valid.valid     = ones(size(vi.valid.image,1),1);
 vi.valid.day       = mat2vec(repmat([1,2],[48,1]));
+vi.valid.level     = ceil(vi.valid.image / 4);
+
+% filter out salads
+for i_day = 1:2
+for i_level = 1:3
+    ii_day   = (vi.valid.day        == i_day);
+    ii_level = (vi.valid.level(:,3) == i_level);
+    ii_discard = shuffle(find(ii_day & ii_level));
+    ii_keep = true(size(ii_day));
+    ii_keep(ii_discard(1:4)) = 0;
+    vi.valid = struct_filter(vi.valid,ii_keep);
+end
+end
+clear i_day i_level ii_day ii_level ii_discard ii_keep;
 
 % build invalid trials
 vi.invalid = vi.valid;
 s = nan;
 while any(vi.invalid.valid)
+    % find trials that are not invalid
+    ii_valid       = (vi.invalid.valid == 1);
+    ii_valid       = ii_valid | (vi.invalid.image(:,1) == vi.invalid.image(:,3));
+    ii_valid       = ii_valid | (vi.invalid.image(:,2) == vi.invalid.image(:,3));
+    ii_valid       = find(ii_valid);
     % suggest a permutation for the probes (only valid salads)
-    ii_permutation = randperm(sum(vi.invalid.valid));
-    ii_valid     = find(vi.invalid.valid == 1);
+    ii_permutation = randperm(length(ii_valid));
     vi.invalid.image(ii_valid,3) = vi.invalid.image(ii_valid(ii_permutation),3);
     vi.invalid.level             = ceil(vi.invalid.image / 4);
     % salad counts as valid if it has all 3 levels
@@ -34,11 +58,12 @@ while any(vi.invalid.valid)
     % if the cardinal of valid salads didn't go down, chances are we're stuck. restart.
     if sum(vi.invalid.valid) == s, vi.invalid = vi.valid; end
     s = sum(vi.invalid.valid);
-    % restart if the solution is too unbalanced across levels/days
+    % check solution
     if ~any(vi.invalid.valid)
+        % restart if the solution is too unbalanced across levels/days
         [~,~,h] = unique(vi.invalid.level + 3*(vi.invalid.day-1),'rows');
-        h = hist(h,1:12);
-        if ~all(ismember(h,8)), vi.invalid = vi.valid; end
+        h = hist(h,1:24);
+        if ~all(ismember(h,[1:5])), vi.invalid = vi.valid; end
     end
 end
 clear s h ii_permutation ii_valid
@@ -52,32 +77,7 @@ questions.vi.image = vi.trial.image;
 questions.vi.valid = vi.trial.valid;
 questions.vi.day   = repmat(vi.trial.day,[1,3]);
 questions.vi.level = vi.trial.level;
-
-% filter out 75% of trials
-for i_day = 1:2
-for i_valid = 0:1
-for i_level = 1:3
-    
-    % index
-    ii_day   = all(questions.vi.day == i_day,2);
-    ii_valid = (questions.vi.valid  == i_valid);
-    ii_level = all(~ismember(questions.vi.level(:,1:2),i_level),2);
-    
-    % select 25% at random
-    ii_discard = (ii_day & ii_valid & ii_level);
-    ii_discard = shuffle(find(ii_discard));
-    ii_discard = ii_discard(1:(length(ii_discard)/4));
-    
-    % filter those out
-    ii_keep = true(size(ii_day));
-    ii_keep(ii_discard) = false;
-    questions.vi = struct_filter(questions.vi,ii_keep);
-end
-end
-end
-clear i_day i_level i_valid
-clear ii_day ii_level ii_valid ii_discard ii_keep
-
+                        
 % isi
 questions.vi.isi = linspace(parameters.time_vi_isimin,parameters.time_vi_isimax,parameters.task_nbtrials_vi)';
 questions.vi.isi = {questions.vi.isi};

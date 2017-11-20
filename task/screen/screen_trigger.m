@@ -10,14 +10,14 @@ Screen(ptb.screen_w, 'TextBackgroundColor', parameters.screen_fontbgcolor);
 %% Plot
 switch parameters.task_sessions{index.session}
     case 'vi'
-        DrawFormattedText(ptb.screen_w,'Valid or not?','center',ptb.screen_center(2)-0.75 * parameters.screen_fontsize,parameters.screen_fontcolor);
+        DrawFormattedText(ptb.screen_w,'Valido?','center',ptb.screen_center(2)-0.75 * parameters.screen_fontsize,parameters.screen_fontcolor);
     case 'rs'
-        DrawFormattedText(ptb.screen_w,'Same day or not?','center',ptb.screen_center(2)-0.75 * parameters.screen_fontsize,parameters.screen_fontcolor);
+        DrawFormattedText(ptb.screen_w,'Mismo dia?','center',ptb.screen_center(2)-0.75 * parameters.screen_fontsize,parameters.screen_fontcolor);
     otherwise
         error('screen_trigger: error. session doesnt exist');
 end
 
-DrawFormattedText(ptb.screen_w,'Waiting for trigger ...','center',ptb.screen_center(2)+0.75 * parameters.screen_fontsize,parameters.screen_triggercolor);
+DrawFormattedText(ptb.screen_w,'Esperando trigger ...','center',ptb.screen_center(2)+0.75 * parameters.screen_fontsize,parameters.screen_triggercolor);
 
 %% Time
 ptb.screen_time_this = GetSecs;
